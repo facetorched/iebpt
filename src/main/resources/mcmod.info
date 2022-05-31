@@ -1,0 +1,16 @@
+[
+{
+  "modid": "iebpt",
+  "name": "Immersive Engineering Blueprint Tweaker",
+  "description": "Adds blueprint recipes to minetweaker",
+  "version": "${version}",
+  "mcversion": "${mcversion}",
+  "url": "",
+  "updateUrl": "",
+  "authorList": ["FaceTorched"],
+  "credits": "Gregtech Ottoman Nation",
+  "logoFile": "",
+  "screenshots": [],
+  "dependencies": []
+}
+]
