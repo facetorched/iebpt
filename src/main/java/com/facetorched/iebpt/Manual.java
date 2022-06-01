@@ -45,7 +45,12 @@ public class Manual {
 		public void apply() {
 			ManualInstance manual = ManualHelper.getManual();
 			this.manualEntry = manual.getEntry(name);
-			manual.manualContents.remove(manualEntry.getCategory(), manualEntry);
+			if (manualEntry != null) {
+				manual.manualContents.remove(manualEntry.getCategory(), manualEntry);
+			}
+			else {
+				MineTweakerAPI.logError("no Engineer's Manual entry with name " + name);
+			}
 		}
 		@Override
 		public boolean canUndo() {
@@ -53,11 +58,11 @@ public class Manual {
 		}
 		@Override
 		public String describe() {
-			return "removing Immersive Engineering Manual entry" + name;
+			return "removing Engineer's Manual entry" + name;
 		}
 		@Override
 		public String describeUndo() {
-			return "re-adding Immersive Engineering Manual entry " + name;
+			return "re-adding Engineer's Manual entry " + name;
 		}
 		@Override
 		public Object getOverrideKey() {
@@ -66,8 +71,10 @@ public class Manual {
 		}
 		@Override
 		public void undo() {
-			ManualInstance manual = ManualHelper.getManual();
-			manual.addEntry(name, manualEntry.getCategory(), manualEntry.getPages());
+			if (manualEntry != null){
+				ManualInstance manual = ManualHelper.getManual();
+				manual.addEntry(name, manualEntry.getCategory(), manualEntry.getPages());
+			}
 		}
 	}
 	
@@ -89,9 +96,18 @@ public class Manual {
 	    	if(manualEntry != null) {
 	    		@SuppressWarnings("unchecked")
 				ArrayList<IManualPage> mp = new ArrayList<IManualPage>(Arrays.asList(manualEntry.getPages()));
-	    		page = mp.remove(pageNum);
+	    		try {
+	    			page = mp.remove(pageNum);
+	    		}
+	    		catch (IndexOutOfBoundsException e) {
+	    			MineTweakerAPI.logError("Engineer's Manual entry with name " + name + " does not have a page at index " + pageNum);
+	    			return;
+	    		}
 	    		IManualPage[] mparr = new IManualPage[mp.size()];
 	    		manualEntry.setPages(mp.toArray(mparr));
+	    	}
+	    	else {
+	    		MineTweakerAPI.logError("no Engineer's Manual entry with name " + name);
 	    	}
 		}
 		@Override
@@ -100,11 +116,11 @@ public class Manual {
 		}
 		@Override
 		public String describe() {
-			return "removing Immersive Engineering Manual page " + pageNum + " from entry " + name;
+			return "removing Engineer's Manual page " + pageNum + " from entry " + name;
 		}
 		@Override
 		public String describeUndo() {
-			return "re-adding Immersive Engineering Manual page " + pageNum + " to entry " + name;
+			return "re-adding Engineer's Manual page " + pageNum + " to entry " + name;
 		}
 		@Override
 		public Object getOverrideKey() {
@@ -115,7 +131,7 @@ public class Manual {
 		public void undo() {
 			ManualInstance manual = ManualHelper.getManual();
 			ManualEntry manualEntry = manual.getEntry(name);
-	    	if(manualEntry != null) {
+	    	if(manualEntry != null && page != null) {
 	    		@SuppressWarnings("unchecked")
 				ArrayList<IManualPage> mp = new ArrayList<IManualPage>(Arrays.asList(manualEntry.getPages()));
 	    		mp.add(pageNum, page);
@@ -130,7 +146,7 @@ public class Manual {
 		private final int pageNum;
 		private final String text;
 		private final String category;
-		IManualPage page;
+		boolean applied;
 
 		public AddPage(String name, String text, String category, int pageNum){
 			this.name = name;
@@ -146,12 +162,12 @@ public class Manual {
 	    	if(manualEntry != null && (category == null || category.equals(manualEntry.getCategory()))) {
 	    		@SuppressWarnings("unchecked")
 				ArrayList<IManualPage> mp = new ArrayList<IManualPage>(Arrays.asList(manualEntry.getPages()));
-	    		page = new ManualPages.Text(manual, text);
 	    		try {
-	    			mp.add(pageNum, page);
+	    			mp.add(pageNum, new ManualPages.Text(manual, text));
+	    			applied = true;
 	    		}
 	    		catch (IndexOutOfBoundsException e) {
-	    			MineTweakerAPI.logError("pageNum out of bounds");
+	    			MineTweakerAPI.logError("Engineer's Manual entry with name " + name + " cannot add a page at index " + pageNum);
 	    			return;
 	    		}
 	    		IManualPage[] mparr = new IManualPage[mp.size()];
@@ -159,11 +175,11 @@ public class Manual {
 	    	}
 	    	else if (category != null){
 	    		if(pageNum != 0) {
-	    			MineTweakerAPI.logError("pageNum out of bounds");
+	    			MineTweakerAPI.logError("Engineer's Manual entry with name " + name + " cannot add a page at index " + pageNum);
 	    			return;
 	    		}
-	    		page = new ManualPages.Text(manual, text);
-	    		manual.addEntry(name, category, page);
+	    		manual.addEntry(name, category, new ManualPages.Text(manual, text));
+	    		applied = true;
 	    	}
 		}
 		@Override
@@ -172,11 +188,11 @@ public class Manual {
 		}
 		@Override
 		public String describe() {
-			return "adding Immersive Engineering Manual page " + pageNum + " to entry " + name;
+			return "adding Engineer's Manual page " + pageNum + " to entry " + name;
 		}
 		@Override
 		public String describeUndo() {
-			return "removing Immersive Engineering Manual page " + pageNum + " from entry " + name;
+			return "removing Engineer's Manual page " + pageNum + " from entry " + name;
 		}
 		@Override
 		public Object getOverrideKey() {
@@ -187,17 +203,13 @@ public class Manual {
 		public void undo() {
 			ManualInstance manual = ManualHelper.getManual();
 			ManualEntry manualEntry = manual.getEntry(name);
-	    	if(manualEntry != null) {
+	    	if(manualEntry != null && applied) {
 	    		@SuppressWarnings("unchecked")
 				ArrayList<IManualPage> mp = new ArrayList<IManualPage>(Arrays.asList(manualEntry.getPages()));
 	    		mp.remove(pageNum);
 	    		if(mp.size() == 0) {
 	    			String cat = manualEntry.getCategory();
 	    			manual.manualContents.remove(cat, manualEntry);
-	    			if(manual.manualContents.get(cat).size() == 0){
-	    				manual.manualContents.removeAll(cat);
-	    				//MineTweakerAPI.logError("failed to remove category " + cat);
-	    			}
 	    		}
 	    		else {
 	    			IManualPage[] mparr = new IManualPage[mp.size()];
