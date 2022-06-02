@@ -1,6 +1,7 @@
 package com.facetorched.iebpt;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import blusunrize.immersiveengineering.api.ManualHelper;
 import blusunrize.lib.manual.IManualPage;
@@ -9,7 +10,6 @@ import blusunrize.lib.manual.ManualInstance.ManualEntry;
 import blusunrize.lib.manual.ManualPages;
 import minetweaker.IUndoableAction;
 import minetweaker.MineTweakerAPI;
-import scala.actors.threadpool.Arrays;
 import stanhebben.zenscript.annotations.Optional;
 import stanhebben.zenscript.annotations.ZenClass;
 import stanhebben.zenscript.annotations.ZenMethod;
@@ -94,7 +94,6 @@ public class Manual {
 			ManualInstance manual = ManualHelper.getManual();
 			ManualEntry manualEntry = manual.getEntry(name);
 	    	if(manualEntry != null) {
-	    		@SuppressWarnings("unchecked")
 				ArrayList<IManualPage> mp = new ArrayList<IManualPage>(Arrays.asList(manualEntry.getPages()));
 	    		try {
 	    			page = mp.remove(pageNum);
@@ -132,7 +131,6 @@ public class Manual {
 			ManualInstance manual = ManualHelper.getManual();
 			ManualEntry manualEntry = manual.getEntry(name);
 	    	if(manualEntry != null && page != null) {
-	    		@SuppressWarnings("unchecked")
 				ArrayList<IManualPage> mp = new ArrayList<IManualPage>(Arrays.asList(manualEntry.getPages()));
 	    		mp.add(pageNum, page);
 	    		IManualPage[] mparr = new IManualPage[mp.size()];
@@ -160,7 +158,6 @@ public class Manual {
 			ManualInstance manual = ManualHelper.getManual();
 			ManualEntry manualEntry = manual.getEntry(name);
 	    	if(manualEntry != null && (category == null || category.equals(manualEntry.getCategory()))) {
-	    		@SuppressWarnings("unchecked")
 				ArrayList<IManualPage> mp = new ArrayList<IManualPage>(Arrays.asList(manualEntry.getPages()));
 	    		try {
 	    			mp.add(pageNum, new ManualPages.Text(manual, text));
@@ -204,7 +201,6 @@ public class Manual {
 			ManualInstance manual = ManualHelper.getManual();
 			ManualEntry manualEntry = manual.getEntry(name);
 	    	if(manualEntry != null && applied) {
-	    		@SuppressWarnings("unchecked")
 				ArrayList<IManualPage> mp = new ArrayList<IManualPage>(Arrays.asList(manualEntry.getPages()));
 	    		mp.remove(pageNum);
 	    		if(mp.size() == 0) {
