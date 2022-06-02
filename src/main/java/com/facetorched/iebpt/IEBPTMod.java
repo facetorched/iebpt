@@ -10,7 +10,7 @@ import minetweaker.MineTweakerAPI;
 public class IEBPTMod
 {
     public static final String MODID = "iebpt";
-    public static final String VERSION = "1.1.1";
+    public static final String VERSION = "1.1.2";
     public static final String NAME = "Immersive Engineering Blueprint Tweaker";
     
     @EventHandler
