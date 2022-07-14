@@ -44,6 +44,7 @@ public class Manual {
 		@Override
 		public void apply() {
 			ManualInstance manual = ManualHelper.getManual();
+			if (manual == null) return;
 			this.manualEntry = manual.getEntry(name);
 			if (manualEntry != null) {
 				manual.manualContents.remove(manualEntry.getCategory(), manualEntry);
@@ -73,6 +74,7 @@ public class Manual {
 		public void undo() {
 			if (manualEntry != null){
 				ManualInstance manual = ManualHelper.getManual();
+				if (manual == null) return;
 				manual.addEntry(name, manualEntry.getCategory(), manualEntry.getPages());
 			}
 		}
@@ -92,6 +94,7 @@ public class Manual {
 		@Override
 		public void apply() {
 			ManualInstance manual = ManualHelper.getManual();
+			if (manual == null) return;
 			ManualEntry manualEntry = manual.getEntry(name);
 	    	if(manualEntry != null) {
 				ArrayList<IManualPage> mp = new ArrayList<IManualPage>(Arrays.asList(manualEntry.getPages()));
@@ -129,6 +132,7 @@ public class Manual {
 		@Override
 		public void undo() {
 			ManualInstance manual = ManualHelper.getManual();
+			if (manual == null) return;
 			ManualEntry manualEntry = manual.getEntry(name);
 	    	if(manualEntry != null && page != null) {
 				ArrayList<IManualPage> mp = new ArrayList<IManualPage>(Arrays.asList(manualEntry.getPages()));
@@ -156,6 +160,7 @@ public class Manual {
 		@Override
 		public void apply() {
 			ManualInstance manual = ManualHelper.getManual();
+			if (manual == null) return;
 			ManualEntry manualEntry = manual.getEntry(name);
 	    	if(manualEntry != null && (category == null || category.equals(manualEntry.getCategory()))) {
 				ArrayList<IManualPage> mp = new ArrayList<IManualPage>(Arrays.asList(manualEntry.getPages()));
@@ -199,6 +204,7 @@ public class Manual {
 		@Override
 		public void undo() {
 			ManualInstance manual = ManualHelper.getManual();
+			if (manual == null) return;
 			ManualEntry manualEntry = manual.getEntry(name);
 	    	if(manualEntry != null && applied) {
 				ArrayList<IManualPage> mp = new ArrayList<IManualPage>(Arrays.asList(manualEntry.getPages()));
